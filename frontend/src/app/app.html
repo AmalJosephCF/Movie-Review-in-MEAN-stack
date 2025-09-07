@@ -1,0 +1,14 @@
+
+    <app-navbar></app-navbar>
+  
+  
+  <ng-container *ngIf="showUserNavbar()">
+    <app-user-dashboard-navbar></app-user-dashboard-navbar>
+  </ng-container>
+  
+  <ng-container *ngIf="showAdminNavbar()">
+    <app-admin-dashboard-navbar></app-admin-dashboard-navbar>
+  </ng-container>
+  
+  <router-outlet></router-outlet>
+  

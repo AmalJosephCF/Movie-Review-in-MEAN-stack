@@ -1,0 +1,108 @@
+<!-- User Dashboard Navbar -->
+
+<!-- User Dashboard Content -->
+<div class="user-dashboard">
+  <div class="dashboard-header">
+    <h1>🎬 My Movie Hub</h1>
+    <p>Welcome to your personal movie poster dashboard</p>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="search-filter-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        placeholder="Search posters, movies, or reviews..."
+        (input)="onSearch()"
+        class="search-input"
+      >
+      <button (click)="onSearch()" class="search-btn">🔍</button>
+    </div>
+    
+    <div class="filter-section">
+      <label for="category">Category:</label>
+      <select 
+        id="category" 
+        [(ngModel)]="selectedCategory" 
+        (change)="onCategoryChange()"
+        class="category-select"
+      >
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading posters...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-state">
+    <p>❌ {{ error }}</p>
+    <button (click)="loadPosters()" class="retry-btn">Try Again</button>
+  </div>
+
+  <!-- Posters Grid -->
+  <div *ngIf="!loading && !error" class="posters-container">
+    <div *ngIf="getFilteredPosters().length === 0" class="empty-state">
+      <p>🎭 No posters found. Try adjusting your search or category filter.</p>
+    </div>
+    
+    <div class="posters-grid">
+      <div *ngFor="let poster of getFilteredPosters()" class="poster-card"  (click)="viewPoster(poster._id)">
+        <div class="poster-image">
+          <img [src]="poster.posterImage" [alt]="poster.title" class="movie-poster">
+        </div>
+        
+        <div class="poster-content">
+          <h3 class="poster-title">{{ poster.title }}</h3>
+          <p class="movie-name">{{ poster.movieName }}</p>
+          <p class="category">{{ poster.category }}</p>
+          
+          <div class="rating">
+            <span *ngFor="let star of getStars(poster.rating)" class="star">{{ star }}</span>
+            <span class="rating-text">({{ poster.rating }}/5)</span>
+          </div>
+          
+          <p class="review-preview">{{ poster.review | slice:0:100 }}{{ poster.review.length > 100 ? '...' : '' }}</p>
+          
+          <div class="poster-meta">
+            <span class="author">By: {{ poster.author.username }}</span>
+            <span class="date">{{ poster.createdAt | date:'shortDate' }}</span>
+          </div>
+          
+          <div class="poster-stats">
+            <span class="comments">💬 {{ poster.comments.length || 0 }} comments</span>
+            <span class="likes">❤️ {{ poster.likes.length || 0 }} likes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && !error && totalPages > 1" class="pagination">
+    <button 
+      (click)="prevPage()" 
+      [disabled]="currentPage === 1"
+      class="page-btn"
+    >
+      ← Previous
+    </button>
+    
+    <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+    
+    <button 
+      (click)="nextPage()" 
+      [disabled]="currentPage === totalPages"
+      class="page-btn"
+    >
+      Next →
+    </button>
+  </div>
+</div>

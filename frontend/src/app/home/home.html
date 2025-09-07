@@ -1,0 +1,145 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">🎬 Movie Poster Hub</h1>
+      <p class="hero-subtitle">Discover amazing movies through user-curated posters and reviews</p>
+      <div class="hero-actions">
+        <a routerLink="/create-poster" class="btn btn-primary">Share Your Movie</a>
+        <a routerLink="/browse" class="btn btn-secondary">Browse All</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search and Filter Section -->
+  <section class="search-section">
+    <div class="search-container">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (input)="onSearch()"
+          placeholder="Search movies, titles, or reviews..."
+          class="search-input"
+        >
+        <button class="search-btn">🔍</button>
+      </div>
+      
+      <div class="category-filter">
+        <label for="category">Category:</label>
+        <select 
+          id="category" 
+          [(ngModel)]="selectedCategory" 
+          (change)="onCategoryChange()"
+          class="category-select"
+        >
+          <option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Posters Grid -->
+  <section class="posters-section">
+    <div class="section-header">
+      <h2>Featured Movie Posters</h2>
+      <p *ngIf="selectedCategory !== 'All'">Showing {{ selectedCategory }} movies</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading amazing movies...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-container">
+      <p class="error-message">{{ error }}</p>
+      <button (click)="loadPosters()" class="btn btn-primary">Try Again</button>
+    </div>
+
+    <!-- Posters Grid -->
+    <div *ngIf="!loading && !error" class="posters-grid">
+      <div *ngFor="let poster of getFilteredPosters()" class="poster-card" (click)="viewPoster(poster._id)">
+        <div class="poster-image">
+          <img [src]="poster.posterImage" [alt]="poster.movieName" loading="lazy">
+          <div class="poster-overlay">
+            <div class="rating">
+              <span *ngFor="let star of getStars(poster.rating)" class="star">{{ star }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="poster-content">
+          <h3 class="poster-title">{{ poster.title }}</h3>
+          <p class="movie-name">{{ poster.movieName }}</p>
+          <div class="category-badge">{{ poster.category }}</div>
+          
+          <p class="review-preview">{{ poster.review | slice:0:100 }}{{ poster.review.length > 100 ? '...' : '' }}</p>
+          
+          <div class="poster-meta">
+            <div class="author">
+              <img 
+                [src]="poster.author.profilePhoto || '/assets/default-avatar.png'" 
+                [alt]="poster.author.username"
+                class="author-avatar"
+              >
+              <span>{{ poster.author.username }}</span>
+            </div>
+            <div class="stats">
+              <span class="comments">💬 {{ poster.comments.length || 0 }}</span>
+              <span class="likes">❤️ {{ poster.likes.length || 0 }}</span>
+            </div>
+          </div>
+          
+          <div class="poster-actions">
+            <a [routerLink]="['/poster', poster._id]" class="btn btn-outline">View Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && !error && getFilteredPosters().length === 0" class="empty-state">
+      <div class="empty-icon">🎭</div>
+      <h3>No movies found</h3>
+      <p *ngIf="searchTerm">Try adjusting your search terms</p>
+      <p *ngIf="selectedCategory !== 'All'">Try selecting a different category</p>
+      <a routerLink="/create-poster" class="btn btn-primary">Be the first to share!</a>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="pagination">
+      <button 
+        (click)="prevPage()" 
+        [disabled]="currentPage === 1"
+        class="btn btn-outline"
+      >
+        ← Previous
+      </button>
+      
+      <span class="page-info">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+      
+      <button 
+        (click)="nextPage()" 
+        [disabled]="currentPage === totalPages"
+        class="btn btn-outline"
+      >
+        Next →
+      </button>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Share Your Movie Experience</h2>
+      <p>Have a movie that changed your life? Share it with the world!</p>
+      <a routerLink="/create-poster" class="btn btn-primary btn-large">Create Your Poster</a>
+    </div>
+  </section>
+</div>

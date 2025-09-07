@@ -1,0 +1,23 @@
+<div *ngIf="loading">⏳ Loading poster...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<div *ngIf="poster && !loading" class="view-poster-container">
+  <div class="poster-left">
+    <img [src]="poster.posterImage" [alt]="poster.title" class="poster-full">
+  </div>
+
+  <div class="poster-right">
+    <h2>{{ poster.title }}</h2>
+    <p><strong>Movie:</strong> {{ poster.movieName }}</p>
+    <p><strong>Category:</strong> {{ poster.category }}</p>
+    <p><strong>Review:</strong> {{ poster.review }}</p>
+    <p><strong>Rating:</strong> {{ poster.rating }}/5</p>
+    <p><strong>By:</strong> {{ poster.author.username }}</p>
+    <p><strong>Date:</strong> {{ poster.createdAt | date:'short' }}</p>
+
+    <div class="poster-stats">
+      <span>💬 {{ poster.comments?.length || 0 }} comments</span>
+      <span>❤️ {{ poster.likes?.length || 0 }} likes</span>
+    </div>
+  </div>
+</div>

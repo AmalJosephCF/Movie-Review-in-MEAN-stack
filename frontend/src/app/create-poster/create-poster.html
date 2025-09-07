@@ -1,0 +1,147 @@
+<div class="create-poster-container">
+  <div class="form-container">
+    <div class="form-header">
+      <h1>🎬 Create Movie Poster</h1>
+      <p>Share your favorite movie with the world! Your poster will be reviewed by admins before appearing on the home page.</p>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="success" class="alert alert-success">
+      <span class="success-icon">✅</span>
+      {{ success }}
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="alert alert-error">
+      <span class="error-icon">❌</span>
+      {{ error }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="poster-form">
+      <!-- Title -->
+      <div class="form-group">
+        <label for="title">Poster Title *</label>
+        <input
+          type="text"
+          id="title"
+          [(ngModel)]="poster.title"
+          name="title"
+          placeholder="Enter a catchy title for your poster"
+          class="form-input"
+          required
+        >
+        <small>This will be the main title displayed on your poster</small>
+      </div>
+
+      <!-- Movie Name -->
+      <div class="form-group">
+        <label for="movieName">Movie Name *</label>
+        <input
+          type="text"
+          id="movieName"
+          [(ngModel)]="poster.movieName"
+          name="movieName"
+          placeholder="Enter the actual movie name"
+          class="form-input"
+          required
+        >
+        <small>The official title of the movie</small>
+      </div>
+
+      <!-- Category -->
+      <div class="form-group">
+        <label for="category">Movie Category *</label>
+        <select
+          id="category"
+          [(ngModel)]="poster.category"
+          name="category"
+          class="form-select"
+          required
+        >
+          <option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </option>
+        </select>
+        <small>Choose the genre that best fits the movie</small>
+      </div>
+
+      <!-- Poster Image -->
+      <div class="form-group">
+        <label for="posterImage">Poster Image URL *</label>
+        <input
+          type="url"
+          id="posterImage"
+          [(ngModel)]="poster.posterImage"
+          name="posterImage"
+          placeholder="https://example.com/movie-poster.jpg"
+          class="form-input"
+          (input)="onImageUrlChange()"
+          required
+        >
+        <small>Provide a direct link to the movie poster image</small>
+        
+        <!-- Image Preview -->
+        <div *ngIf="poster.posterImage" class="image-preview">
+          <img [src]="poster.posterImage" alt="Poster preview" class="preview-image">
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <div class="form-group">
+        <label>Your Rating *</label>
+        <div class="rating-input">
+          <span 
+            *ngFor="let star of getStars(5); let i = index"
+            (click)="setRating(i + 1)"
+            class="star-input"
+            [class.active]="i < (poster.rating || 0)"
+          >
+            {{ i < (poster.rating || 0) ? '★' : '☆' }}
+          </span>
+        </div>
+        <small>Click on the stars to set your rating (1-5)</small>
+      </div>
+
+      <!-- Review -->
+      <div class="form-group">
+        <label for="review">Your Review *</label>
+        <textarea
+          id="review"
+          [(ngModel)]="poster.review"
+          name="review"
+          placeholder="Share your thoughts about this movie... (minimum 10 characters)"
+          class="form-textarea"
+          rows="6"
+          required
+        ></textarea>
+        <small>Write a thoughtful review ({{ poster.review?.length || 0 }}/1000 characters)</small>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="loading"
+        >
+          <span *ngIf="!loading">🎬 Create Poster</span>
+          <span *ngIf="loading" class="loading-text">Creating...</span>
+        </button>
+        
+        <a routerLink="/" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+
+    <!-- Guidelines -->
+    <div class="guidelines">
+      <h3>📋 Submission Guidelines</h3>
+      <ul>
+        <li>Ensure your poster image is high quality and properly represents the movie</li>
+        <li>Write honest, thoughtful reviews that help other users discover great movies</li>
+        <li>Use appropriate categories to help with organization</li>
+        <li>All submissions are reviewed by admins before publication</li>
+        <li>Be respectful and avoid spoilers in your reviews</li>
+      </ul>
+    </div>
+  </div>
+</div>

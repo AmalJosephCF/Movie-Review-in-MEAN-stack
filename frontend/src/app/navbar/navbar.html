@@ -1,0 +1,54 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="logo">
+      <span class="logo-icon">🎬</span>
+      <span class="logo-text">MovieHub</span>
+    </a>
+    
+    <ul class="nav-menu">
+      <!-- Always visible -->
+      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a></li>
+      
+      <!-- Show when NOT logged in -->
+      <li *ngIf="!isLoggedIn"><a routerLink="/register" routerLinkActive="active">Register</a></li>
+      <li *ngIf="!isLoggedIn"><a routerLink="/login" routerLinkActive="active">Login</a></li>
+      
+      <!-- Show when logged in as admin -->
+      <li *ngIf="isLoggedIn && isAdmin"><a routerLink="/admin" routerLinkActive="active">Admin Dashboard</a></li>
+      
+      <!-- Show when logged in as user -->
+      <li *ngIf="isLoggedIn && !isAdmin"><a routerLink="/userlogin" routerLinkActive="active">My Posts</a></li>
+      
+      <!-- Show when logged in -->
+      <li *ngIf="isLoggedIn"><a routerLink="/create-poster" routerLinkActive="active">Create Poster</a></li>
+      
+      <!-- Show when logged in -->
+      <li *ngIf="isLoggedIn" class="user-menu">
+        <div class="user-info">
+          <div class="user-avatar">
+            <img 
+              *ngIf="currentUser?.profilePhoto" 
+              [src]="currentUser.profilePhoto" 
+              [alt]="currentUser.username"
+              class="profile-photo"
+            >
+            <span 
+              *ngIf="!currentUser?.profilePhoto" 
+              class="user-initial"
+            >
+              {{ currentUser?.username?.charAt(0)?.toUpperCase() || 'U' }}
+            </span>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ currentUser?.username || 'User' }}</span>
+            <span class="user-role">{{ currentUser?.role || 'user' }}</span>
+          </div>
+        </div>
+        <button (click)="logout()" class="logout-btn">
+          <span class="logout-icon">🚪</span>
+          Logout
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>

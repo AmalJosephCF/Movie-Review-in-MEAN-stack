@@ -1,0 +1,42 @@
+<nav class="admin-dashboard-navbar">
+  <div class="nav-container">
+    <div class="nav-left">
+      <a routerLink="/admin" routerLinkActive="active" class="logo">
+        <span class="logo-icon">👑</span>
+        <span class="logo-text">Admin Dashboard</span>
+      </a>
+    </div>
+    
+    <ul class="nav-menu">
+      <li><a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">View Posters</a></li>
+      <li><a routerLink="/admin" routerLinkActive="active" [fragment]="'users'">Manage Users</a></li>
+      <li><a routerLink="/admin" routerLinkActive="active" [fragment]="'posters'">Poster Approval</a></li>
+      <li><a routerLink="/create-poster" routerLinkActive="active">Create Poster</a></li>
+    </ul>
+    
+    <div class="nav-right">
+      <div class="user-info">
+        <div class="user-avatar">
+          <img 
+            *ngIf="currentUser?.profilePhoto" 
+            [src]="currentUser.profilePhoto" 
+            [alt]="currentUser.username"
+            class="profile-photo"
+          >
+          <span 
+            *ngIf="!currentUser?.profilePhoto" 
+            class="user-initial"
+          >
+            {{ currentUser?.username?.charAt(0)?.toUpperCase() || 'A' }}
+          </span>
+        </div>
+        <span class="user-name">{{ currentUser?.username || 'Admin' }}</span>
+        <span class="user-role">👑 Admin</span>
+      </div>
+      <button (click)="logout()" class="logout-btn">
+        <span class="logout-icon">🚪</span>
+        Logout
+      </button>
+    </div>
+  </div>
+</nav>

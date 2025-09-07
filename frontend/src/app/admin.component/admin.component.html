@@ -1,0 +1,193 @@
+<!-- Admin Dashboard Content -->
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h1>👑 Admin Dashboard</h1>
+    <p>Manage users and posters</p>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div *ngIf="success" class="alert success">
+    ✅ {{ success }}
+  </div>
+  <div *ngIf="error" class="alert error">
+    ❌ {{ error }}
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button [class.active]="activeTab === 'approvePosters'" (click)="setActiveTab('approvePosters')" class="tab-btn">
+      🎬 Approve Posters
+    </button>
+    <button [class.active]="activeTab === 'managePosters'" (click)="setActiveTab('managePosters')" class="tab-btn">
+      🔧 Manage Posters
+    </button>
+    <button [class.active]="activeTab === 'users'" (click)="setActiveTab('users')" class="tab-btn">
+      👥 Manage Users
+    </button>
+  </div>
+
+  <!-- Approve Posters Tab -->
+  <div *ngIf="activeTab === 'approvePosters'" class="posters-container">
+    <div class="section-header">
+      <h2>✅ Approve Posters</h2>
+      <p>Review posters submitted by users and approve/reject them</p>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading posters...</p>
+    </div>
+
+    <div *ngIf="!loading && pendingPosters.length === 0" class="empty-state">
+      <p>🎭 No posters awaiting approval.</p>
+    </div>
+
+    <div *ngIf="!loading && pendingPosters.length > 0" class="posters-grid">
+      <div *ngFor="let poster of pendingPosters" class="poster-card">
+        <div class="poster-image">
+          <img [src]="poster.posterImage" [alt]="poster.title" class="movie-poster">
+        </div>
+
+        <div class="poster-content">
+          <h3 class="poster-title">{{ poster.title }}</h3>
+          <p class="movie-name">{{ poster.movieName }}</p>
+          <p class="category">{{ poster.category }}</p>
+
+          <div class="rating">
+            <span *ngFor="let star of getStars(poster.rating)" class="star">{{ star }}</span>
+            <span class="rating-text">({{ poster.rating }}/5)</span>
+          </div>
+
+          <p class="review-preview">
+            {{ poster.review | slice:0:100 }}{{ poster.review.length > 100 ? '...' : '' }}
+          </p>
+
+          <div class="poster-actions">
+            <button (click)="approvePoster(poster)" class="btn-approve">✅ Approve</button>
+            <button (click)="rejectPoster(poster)" class="btn-reject">❌ Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Posters Tab -->
+  <div *ngIf="activeTab === 'managePosters'" class="posters-container">
+    <div class="section-header">
+      <h2>🔧 Manage Posters</h2>
+      <p>View all posters (approved & pending) and delete them if necessary</p>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading posters...</p>
+    </div>
+
+    <div *ngIf="!loading && allPosters.length === 0" class="empty-state">
+      <p>📭 No posters available.</p>
+    </div>
+
+    <div *ngIf="!loading && allPosters.length > 0" class="posters-grid">
+      <div *ngFor="let poster of allPosters" class="poster-card" (click)="viewPoster(poster._id)">
+        <div class="poster-image">
+          <img [src]="poster.posterImage" [alt]="poster.title" class="movie-poster">
+        </div>
+
+        <div class="poster-content">
+          <h3 class="poster-title">{{ poster.title }}</h3>
+          <p class="movie-name">{{ poster.movieName }}</p>
+          <p class="category">{{ poster.category }}</p>
+
+          <div class="rating">
+            <span *ngFor="let star of getStars(poster.rating)" class="star">{{ star }}</span>
+            <span class="rating-text">({{ poster.rating }}/5)</span>
+          </div>
+
+          <p class="review-preview">
+            {{ poster.review | slice:0:100 }}{{ poster.review.length > 100 ? '...' : '' }}
+          </p>
+
+          <div class="poster-meta">
+            <span class="author">👤 By: {{ poster.author.username || 'Unknown' }}</span>
+            <span class="date">📅 {{ poster.createdAt | date:'shortDate' }}</span>
+          </div>
+
+          <div class="poster-actions">
+            <button (click)="deletePoster(poster)" class="btn-delete">🗑 Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Users Tab -->
+  <div *ngIf="activeTab === 'users'" class="users-container">
+    <div class="section-header">
+      <h2>👥 User Management</h2>
+      <p>Manage user accounts and roles</p>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading users...</p>
+    </div>
+
+    <div *ngIf="!loading && users.length === 0" class="empty-state">
+      <p>👤 No users found.</p>
+    </div>
+
+    <div *ngIf="!loading && users.length > 0" class="users-table-container">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users" class="user-row">
+            <td class="user-info-cell">
+              <div class="user-avatar">
+                <img 
+                  *ngIf="user.profilePhoto" 
+                  [src]="user.profilePhoto" 
+                  [alt]="user.username"
+                  class="profile-photo"
+                >
+                <span *ngIf="!user.profilePhoto" class="user-initial">
+                  {{ user.username.charAt(0).toUpperCase() }}
+                </span>
+              </div>
+              <div class="user-details">
+                <span class="user-name">{{ user.fullName }}</span>
+                <span class="username">@{{ user.username }}</span>
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span [class]="getRoleBadgeClass(user.role)" class="role-badge">
+                {{ user.role }}
+              </span>
+            </td>
+            <td>
+              <select 
+                [value]="user.role" 
+                (change)="onRoleChange(user, $event)"
+                [disabled]="isLastAdmin(user)"
+                class="role-select"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+              <small *ngIf="isLastAdmin(user)" class="warning">
+                Cannot remove last admin
+              </small>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
