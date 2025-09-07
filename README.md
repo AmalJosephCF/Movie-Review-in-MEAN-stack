@@ -106,7 +106,7 @@ EMAIL_USER=your_email_here
 EMAIL_PASS=your_email_password_here
 
 
-
+```
 
 Run backend:
 ```bash
