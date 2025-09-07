@@ -79,12 +79,34 @@ npm install
 ```
 
 Create a `.env` file inside **backend/** with:
-```bash
-MONGO_URI=your_mongodb_connection_string
+### Environment Variables (.env)
+
+The backend uses environment variables to store sensitive data such as database URIs, JWT secrets, and email credentials. 
+
+Create a `.env` file inside the `backend` folder with the following structure:
+
+```env
+# Backend server port
 PORT=5000
-JWT_SECRET=your_secret_key
+
+# MongoDB connection URI
+MONGO_URI=mongodb://127.0.0.1:27017/mean_login
+
+# JWT configuration
+JWT_SECRET=your_jwt_secret_here
 JWT_EXPIRES=1d
-```
+
+# CORS configuration
+CORS_ORIGIN=http://localhost:4200
+
+# Email configuration (for password reset / notifications)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email_here
+EMAIL_PASS=your_email_password_here
+
+
+
 
 Run backend:
 ```bash
